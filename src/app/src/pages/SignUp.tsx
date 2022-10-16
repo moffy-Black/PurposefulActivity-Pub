@@ -12,6 +12,19 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 
+// function Copyright(props: any) {
+//   return (
+//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
+//       {'Copyright © '}
+//       <Link to="/">
+//         Your Website
+//       </Link>{' '}
+//       {new Date().getFullYear()}
+//       {'.'}
+//     </Typography>
+//   );
+// }
+
 const theme = createTheme();
 
 export default function SignUp() {
@@ -39,7 +52,7 @@ export default function SignUp() {
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Box component={"div"}
+        <Box
           sx={{
             marginTop: 8,
             display: "flex",

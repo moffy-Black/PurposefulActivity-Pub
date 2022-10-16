@@ -21,7 +21,7 @@
 2. ./src/app/node_modules の作成
 
 ```
-~/purposefulActivity $ docker compose run --rm react-app sh -c "cd app && npm install --legacy-peer-deps"
+~/purposefulActivity $ docker compose run --rm react-app sh -c "cd app && npm install"
 ```
 
 3. コンテナ起動
@@ -35,3 +35,16 @@
 4. ブラウザで接続
 
 [http://localhost:3000/](http://localhost:3000/)
+
+## デプロイ
+リポジトリのルートフォルダで
+```
+docker buildx build --platform linux/amd64 --tag  gcr.io/directed-fabric-360008/purposeful-activity .
+```
+```
+docker push gcr.io/directed-fabric-360008/purposeful-activity
+```
+### local確認
+```
+docker run -p 8080:8080 --rm gcr.io/directed-fabric-360008/purposeful-activity
+```

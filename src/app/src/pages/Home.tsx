@@ -5,7 +5,8 @@ const Home = () => {
     <>
       <h1>ホーム</h1>
       <div>
-        新規登録は<Link to={`/signup/`}>こちら</Link>
+        <li><Link to={`/signup/`}>SignUp</Link></li>
+        <li><Link to={`/signin/`}>SignIn</Link></li>
       </div>
     </>
   );

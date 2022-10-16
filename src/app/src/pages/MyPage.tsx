@@ -109,7 +109,7 @@ const PersistentDrawerLeft = () => {
   };
 
   return (
-    <Box component={"div"} sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} color="secondary">
         <Toolbar>
