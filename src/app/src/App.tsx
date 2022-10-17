@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./pages/AuthContext";
-import Home from "./pages/Home";
-import SignUp from "./pages/userAuth/SignUp";
-import SignIn from "./pages/userAuth/SignIn";
-import MyPage from "./pages/MyPage";
+import { AuthProvider } from "./UI/AuthContext";
+import Home from "./UI/Home";
+import SignUp from "./UI/userAuth/SignUp";
+import SignIn from "./UI/userAuth/SignIn";
+import MyPage from "./UI/MyPage";
 import "./App.css";
-import MeetingRoom from "./pages/MeetingRoom";
+import MeetingRoom from "./UI/MeetingRoom";
 
 const App = () => {
   return (

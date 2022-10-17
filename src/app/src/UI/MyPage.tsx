@@ -21,7 +21,7 @@ import Article from "@mui/icons-material/Article";
 import Logout from "@mui/icons-material/Logout";
 import { auth } from "../firebase";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../context/AuthContext";
+import { useAuthContext } from "./AuthContext";
 import Content from "../components/Content";
 
 const MyPage = () => {
