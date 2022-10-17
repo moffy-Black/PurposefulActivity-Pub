@@ -3,9 +3,9 @@ import { AuthProvider } from "./UI/AuthContext";
 import Home from "./UI/Home";
 import SignUp from "./UI/userAuth/SignUp";
 import SignIn from "./UI/userAuth/SignIn";
-import MyPage from "./UI/MyPage";
+import BasePage from "./UI/base/BasePage";
 import "./App.css";
-import MeetingRoom from "./UI/MeetingRoom";
+import MeetingRoom from "./UI/meetingRoom/MeetingRoom";
 
 const App = () => {
   return (
@@ -15,7 +15,7 @@ const App = () => {
           <Route path={'/'} element={<Home />} />
           <Route path={'/signup/'} element={<SignUp />} />
           <Route path={'/signin/'} element={<SignIn />} />
-          <Route path={'/mypage/:content'} element={<MyPage />} />
+          <Route path={'/mypage/:content'} element={<BasePage />} />
           <Route
             path={'/meeting-room/:token'}
             element={<MeetingRoom />}

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { auth } from "../../firebase";
 
-export const funcSubmit = async (event: React.FormEvent<HTMLFormElement>, method: string) => {
+export const funcLogin = async (event: React.FormEvent<HTMLFormElement>, method: string) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   interface Obj {

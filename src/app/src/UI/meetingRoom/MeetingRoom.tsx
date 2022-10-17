@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Room } from "../components/Room";
+import { Room } from "./room/Room";
 
 const MeetingRoom = () => {
   const { token } = useParams();

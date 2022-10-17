@@ -12,7 +12,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { funcSubmit } from "../../components/userAuth/Submit";
+import { funcLogin } from "../../components/userAuth/login";
 
 
 const theme = createTheme();
@@ -20,8 +20,8 @@ const theme = createTheme();
 export default function SignIn() {
   const navigate = useNavigate();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const authResult = await funcSubmit(event, "signin");
-    if (authResult) {
+    const loginResult = await funcLogin(event, "signin");
+    if (loginResult) {
       navigate("../mypage/meeting");
     }
   };

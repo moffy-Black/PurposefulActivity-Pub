@@ -1,10 +1,8 @@
 import { useParams } from "react-router-dom";
-import MeetingView from "./Meeting";
-import Minutes from "./Minutes";
+import MeetingView from "../meetingSetting/MeetingSetting";
+import Minutes from "../Minutes/Minutes";
 
 const Content = () => {
-  // We can use the `useParams` hook here to access
-  // the dynamic pieces of the URL.
   const { content } = useParams();
 
   if (content === "meeting") {
