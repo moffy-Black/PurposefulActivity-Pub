@@ -12,7 +12,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { funcLogin } from "../../components/userAuth/login";
+import { funcLogin } from "../../firestore/auth/login";
 
 
 const theme = createTheme();

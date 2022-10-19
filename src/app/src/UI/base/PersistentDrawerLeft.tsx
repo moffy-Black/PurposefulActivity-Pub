@@ -22,7 +22,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
 import Content from "./Content";
-import { funcLogout } from "../../components/base/logout";
+import { funcLogout } from "../../firestore/auth/logout";
 import { AppBarStyle } from "./style/AppBarStyle";
 import { ContentStyle } from "./style/ContentStyle";
 import { DrawerHeaderStyle } from "./style/DrawerHeaderStyle"
