@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./UI/AuthContext";
-import Home from "./UI/Home";
+import Land from "./UI/Land";
 import SignUp from "./UI/userAuth/SignUp";
 import SignIn from "./UI/userAuth/SignIn";
 import BasePage from "./UI/base/BasePage";
@@ -12,7 +12,7 @@ const App = () => {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path={'/'} element={<Home />} />
+          <Route path={'/'} element={<Land />} />
           <Route path={'/signup/'} element={<SignUp />} />
           <Route path={'/signin/'} element={<SignIn />} />
           <Route path={'/mypage/:content'} element={<BasePage />} />
