@@ -3,23 +3,22 @@ import Peer, { SfuRoom } from "skyway-js";
 //
 // #react
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 //
 // #web speech API
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 //
 // #material ui
-import AllInclusiveTwoToneIcon from '@mui/icons-material/AllInclusiveTwoTone';
 import AppBar from '@mui/material/AppBar';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
-import { alpha } from "@mui/material/styles";
 import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Grid from "@mui/material/Grid";
+import Home from '@mui/icons-material/Home';
 import IconButton from '@mui/material/IconButton';
+import { alpha, createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -45,6 +44,7 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import BackgroundImage from '/usr/src/app/src/assets/gray.jpg';
 //
 
+import { RemoteVideo, ShareVideo } from './remoteVideoComponent';
 
 type VideoStream = {
   stream: MediaStream;
@@ -59,25 +59,35 @@ type Transcription = {
   [peerId:string]: "";
 }
 
-export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
+export function Room(props: {roomId:string;}) {
+  const navigate = useNavigate();
+  // #skyway
   const [peer, setPeer] = React.useState<Peer>();
-  const [remoteVideo, setRemoteVideo] = React.useState<VideoStream[]>([]);
-  const [localStream, setLocalStream] = React.useState<MediaStream>();
   const [room, setRoom] = React.useState<SfuRoom>();
-  const localVideoRef = React.useRef<HTMLVideoElement>(null);
-  const [isRoom, setIsRoom] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  // #Flag Changed by UI
+  const [isRoom, setIsRoom] = React.useState(false);
   const [isMic, setIsMic] = React.useState(false);
   const [isCamera, setIsCamera] = React.useState(false);
   const [isShared, setIsShared] = React.useState(false);
+  const [isBottomBar, setIsBottomBar] = React.useState(true);
   const [isRemoteShared, setIsRemoteShared] = React.useState<string>();
-  const [localComprehension, setLocalComprehension] = React.useState("greenComprehension");
+  // #Video context
+  const [localStream, setLocalStream] = React.useState<MediaStream>();
+  const localVideoRef = React.useRef<HTMLVideoElement>(null);
+  const [remoteVideo, setRemoteVideo] = React.useState<VideoStream[]>([]);
+  const [localComprehension, setLocalComprehension] = React.useState("lightgreen");
   const [remoteComprehensions, setRemoteComprehensions] = React.useState<Comprehension>({});
   const [remoteTranscriptions, setRemoteTranscriptions] = React.useState<Transcription>({});
-  const [enableBottomBar, setEnableBottomBar] = React.useState(true);
   const [sizeVideoRef, setSizeVideoRef] = React.useState(0);
+  // #transcription & Synthesis
   const { transcript, interimTranscript, finalTranscript, resetTranscript } = useSpeechRecognition();
   const speechText = new SpeechSynthesisUtterance();
+
+  React.useEffect(() => {
+    const peer = new Peer({ key: process.env.REACT_APP_SKYWAY_API_KEY||""});
+    setPeer(peer);
+  },[]);
 
   React.useEffect(() => {
     navigator.mediaDevices
@@ -96,29 +106,27 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
       });
   }, []);
   React.useEffect(() => {
-    const peer = new Peer({ key: process.env.REACT_APP_SKYWAY_API_KEY||""});
-    setPeer(peer);
-  },[]);
+    if (localVideoRef.current) {
+      setSizeVideoRef(localVideoRef.current.offsetWidth/32|0);
+    }
+  }, [localVideoRef.current?.offsetWidth])
+
   React.useEffect(() => {
     if (interimTranscript !== '') {
       onSend(`Transcript-${interimTranscript}`);
     }
     }, [interimTranscript]);
   React.useEffect(() => {
-    onSend(`Transcript-`);
+    onSend('Transcript-');
     resetTranscript();
   }, [finalTranscript]);
-  React.useEffect(() => {
-    if (localVideoRef.current) {
-      setSizeVideoRef(localVideoRef.current.offsetWidth/32|0);
-    }
-  }, [localVideoRef.current?.offsetWidth])
+
   const onStart = () => {
     if (peer) {
       if (!peer.open) {
         return;
       }
-      const tmpRoom = peer.joinRoom<SfuRoom>(roomId, {
+      const tmpRoom = peer.joinRoom<SfuRoom>(props.roomId, {
         mode: "sfu",
         stream: localStream,
       });
@@ -232,17 +240,6 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
     localStream?.getVideoTracks().forEach((track)=>track.enabled=!isCamera);
   };
 
-  const switchBorderColor = (comprehensionMessage:string) => {
-    if (comprehensionMessage==="greenComprehension") {
-      return "springgreen"
-    }
-    else if(comprehensionMessage==="yellowComprehension") {
-      return "yellow"
-    }
-    else if(comprehensionMessage==="redComprehension") {
-      return "red"
-    }
-  };
   const onTranscription = async() => {
     if (!isMic) {
       SpeechRecognition.startListening({ language: 'ja-JP', continuous:true });
@@ -254,14 +251,14 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
   const castVideo = () => {
     return remoteVideo.map((video) => {
       if (video.peerId !== isRemoteShared){
-        return <RemoteVideo key={video.peerId} video={video} comprehension={switchBorderColor(remoteComprehensions[video.peerId])} transcription={remoteTranscriptions[video.peerId]} size={-sizeVideoRef*2} />;
+        return <RemoteVideo key={video.peerId} video={video} comprehension={remoteComprehensions[video.peerId]} transcription={remoteTranscriptions[video.peerId]} size={-sizeVideoRef*2} />;
       }
     });
   };
   const shareVideo = () => {
     return remoteVideo.map((video) => {
       if (video.peerId === isRemoteShared) {
-        return <ShareVideo key={video.peerId} video={video} comprehension={switchBorderColor(remoteComprehensions[video.peerId])} transcription={remoteTranscriptions[video.peerId]} size={-sizeVideoRef*2} />;
+        return <ShareVideo key={video.peerId} video={video} comprehension={remoteComprehensions[video.peerId]} transcription={remoteTranscriptions[video.peerId]} size={-sizeVideoRef*2} />;
       }
     })
   }
@@ -270,7 +267,7 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
       <Box className="functionArea" sx={{width:"100%", bottom:"0", position:"fixed"}}>
         <Box justifyContent={"center"} alignItems={"center"} display={"flex"}>
           <Box sx={{bgcolor: "#37474F", borderRadius: "16px"}} marginBottom={0.5}>
-            <IconButton onClick={event => {setEnableBottomBar(!enableBottomBar)}}>
+            <IconButton onClick={event => {setIsBottomBar(!isBottomBar)}}>
               <KeyboardDoubleArrowUpIcon  style={{ color: "white"}} />
             </IconButton>
           </Box>
@@ -283,7 +280,7 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
       <Box className="functionArea" sx={{width:"100%", bottom:"0", position:"fixed"}}>
         <Box justifyContent={"center"} alignItems={"center"} display={"flex"}>
           <Box sx={{bgcolor: "#37474F", borderRadius: "16px"}} marginBottom={0.5}>
-            <IconButton onClick={event => {setEnableBottomBar(!enableBottomBar)}}>
+            <IconButton onClick={event => {setIsBottomBar(!isBottomBar)}}>
               <KeyboardDoubleArrowDownIcon style={{ color: "white"}} />
             </IconButton>
           </Box>
@@ -330,20 +327,20 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
             <Box bgcolor={"#FFFFFF"} margin={1} borderRadius={"16px"} justifyContent={"center"} alignItems={"center"} display={"flex"}>
               <ButtonGroup>
                 <IconButton onClick={event => {
-                    onSend("Comprehension-greenComprehension");
-                    setLocalComprehension("greenComprehension");
+                    onSend("Comprehension-lightgreen");
+                    setLocalComprehension("lightgreen");
                   }}>
                     <CheckCircleIcon color="success" sx={{ fontSize: 60 }}/>
                   </IconButton>
                   <IconButton onClick={event => {
-                    onSend("Comprehension-yellowComprehension");
-                    setLocalComprehension("yellowComprehension");
+                    onSend("Comprehension-yellow");
+                    setLocalComprehension("yellow");
                   }}>
                     <WarningIcon color="warning" sx={{ fontSize: 60 }}/>
                   </IconButton>
                   <IconButton onClick={event => {
-                    onSend("Comprehension-redComprehension");
-                    setLocalComprehension("redComprehension");
+                    onSend("Comprehension-red");
+                    setLocalComprehension("red");
                   }}>
                     <DisabledByDefaultIcon color="error" sx={{ fontSize: 60 }}/>
                   </IconButton>
@@ -396,9 +393,11 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
     <ThemeProvider theme={createTheme()}>
       <CssBaseline />
       <div style={{height:64}}>
-        <AppBar position="relative" color="secondary" sx={{position:"fixed"}}>
+        <AppBar position="fixed" color="secondary">
           <Toolbar>
-            <AllInclusiveTwoToneIcon sx={{ mr: 4 }} />
+            <IconButton onClick={() => {navigate("../../mypage/meeting");}}>
+              <Home sx={{ mr: 2 }} style={{ color: "white"}}/>
+            </IconButton>
             <Typography variant="h6" color="inherit" noWrap>
               Purposeful Activity
             </Typography>
@@ -415,7 +414,7 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
                 </Box> : <></>}
               <Grid container spacing={5} paddingTop={5} paddingLeft={10} paddingRight={10}>
                 <Grid item xs={6} md={4}>
-                  <Card className="card" sx={{borderRadius: '16px', borderWidth: '6px', borderStyle:"solid", borderColor:switchBorderColor(localComprehension) }}>
+                  <Card className="card" sx={{borderRadius: '16px', borderWidth: '6px', borderStyle:"solid", borderColor:localComprehension }}>
                     <CardMedia
                       component='video'
                       className='localvideo'
@@ -431,51 +430,9 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
             </div>
           </Box>
           <div style={{height:112}}>
-            {enableBottomBar? <>{bottomBar()}</>: <>{openBottomBar()}</>}
+            {isBottomBar? bottomBar(): openBottomBar()}
           </div>
       </main>
     </ThemeProvider>
   );
-};
-
-const RemoteVideo = (props:any) => {
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-
-  React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = props.video.stream;
-      videoRef.current.play().catch((e) => console.log(e));
-    }
-  }, [props.video]);
-  return <Grid item xs={6} md={4}>
-          <Card className="card" sx={{borderRadius: '16px', borderWidth: '6px', borderStyle:"solid", borderColor:props.comprehension}}>
-            <CardMedia
-              component='video'
-              className='Remotevideo'
-              ref={videoRef}
-              autoPlay playsInline
-            />
-            <Typography align="center" fontSize={32} color={"#FFFFFF"} bgcolor={alpha("#323232", 0.95)}>{props.transcription?.slice(props.size)}</Typography>
-          </Card>
-        </Grid>
-};
-
-const ShareVideo = (props:any) => {
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-
-  React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = props.video.stream;
-      videoRef.current.play().catch((e) => console.log(e));
-    }
-  }, [props.video]);
-  return <Card className="card" sx={{borderRadius: '16px', borderWidth: '6px', borderStyle:"solid", borderColor:props.comprehension}}>
-          <CardMedia
-            component='video'
-            className='Remotevideo'
-            ref={videoRef}
-            autoPlay playsInline
-          />
-          <Typography align="center" fontSize={32} color={"#FFFFFF"} bgcolor={alpha("#323232", 0.95)}>{props.transcription?.slice(props.size)}</Typography>
-        </Card>
 };
