@@ -1,5 +1,5 @@
 import * as React from "react";
-import { auth } from "../../firebase";
+import { auth, createUserWithEmailAndPassword ,signInWithEmailAndPassword } from "../../firebase";
 
 export const funcLogin = async (event: React.FormEvent<HTMLFormElement>, method: string) => {
   event.preventDefault();
@@ -14,7 +14,7 @@ export const funcLogin = async (event: React.FormEvent<HTMLFormElement>, method:
   };
   if (method==="signup") {
     try {
-      await auth.createUserWithEmailAndPassword(user.email, user.password);
+      await createUserWithEmailAndPassword(auth,user.email, user.password);
       return true;
     } catch (error) {
       console.error(error);
@@ -22,7 +22,7 @@ export const funcLogin = async (event: React.FormEvent<HTMLFormElement>, method:
     }
   } else if (method==="signin") {
     try {
-      auth.signInWithEmailAndPassword(user.email, user.password);
+      signInWithEmailAndPassword(auth,user.email, user.password);
       return true;
     } catch (error) {
       console.error(error);
