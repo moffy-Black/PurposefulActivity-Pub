@@ -41,7 +41,7 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 //
 
 // #backgroundImage
-import BackgroundImage from '/usr/src/app/src/assets/gray.jpg';
+import BackgroundImage from './../../image/background.jpg';
 //
 
 import { RemoteVideo, ShareVideo } from './remoteVideoComponent';
