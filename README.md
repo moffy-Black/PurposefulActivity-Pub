@@ -21,7 +21,7 @@
 2. ./src/app/node_modules の作成
 
 ```
-~/purposefulActivity $ docker compose run --rm react-app sh -c "cd app && npm install"
+~/purposefulActivity $ docker compose run --rm react-app sh -c "npm install"
 ```
 
 3. コンテナ起動
@@ -36,10 +36,15 @@
 
 [http://localhost:3000/](http://localhost:3000/)
 
+## テスト
+``` docker-compose.yaml
+command: sh -c "npm test"
+```
+
 ## デプロイ
 リポジトリのルートフォルダで
 ```
-docker buildx build --platform linux/amd64 --tag  gcr.io/directed-fabric-360008/purposeful-activity .
+docker buildx build --platform linux/amd64 --tag gcr.io/directed-fabric-360008/purposeful-activity .
 ```
 ```
 docker push gcr.io/directed-fabric-360008/purposeful-activity
