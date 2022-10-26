@@ -1,37 +1,28 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
+
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import { funcLogin } from "../../firestore/auth/login";
+
 
 const theme = createTheme();
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    interface Obj {
-      email: any;
-      password: any;
-    }
-    const user: Obj = {
-      email: data.get("email"),
-      password: data.get("password"),
-    };
-    try {
-      auth.signInWithEmailAndPassword(user.email, user.password);
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const loginResult = await funcLogin(event, "signin");
+    if (loginResult) {
       navigate("../mypage/meeting");
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -39,7 +30,7 @@ export default function SignIn() {
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Box component={"div"}
+        <Box
           sx={{
             marginTop: 8,
             display: "flex",
@@ -87,19 +78,13 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <Grid container>
-              {/* <Grid item xs>
-                <Link to="/">
-                  Forgot password?
-                </Link>
-              </Grid> */}
+            <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link to="/signup">{"Don't have an account? Sign Up"}</Link>
+                <Link to="/signup">まだアカウントを持っていない場合 Sign Up</Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        {/* <Copyright sx={{ mt: 8, mb: 4 }} /> */}
       </Container>
     </ThemeProvider>
   );

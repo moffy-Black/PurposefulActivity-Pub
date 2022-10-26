@@ -2,6 +2,8 @@
 import firebase from 'firebase/compat/app';
 import "firebase/compat/auth";
 import { getFirestore, Timestamp } from "firebase/firestore";
+import { getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -21,10 +23,10 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
+const auth = getAuth();
 
-const db = new getFirestore();
+const db = getFirestore();
 
 const timestamp = Timestamp.now();
 
-export { auth, db, timestamp }
+export { auth, db, timestamp , createUserWithEmailAndPassword ,signInWithEmailAndPassword}
